@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Book Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="max-w-md mx-auto p-4 pb-16">
+
+    <header class="flex items-center justify-between mb-6 pt-4">
+      <h1 class="text-2xl font-bold tracking-tight">BOOK COMPANION</h1>
+      <button id="settingsBtn" aria-label="Settings" class="btn-secondary w-10 h-10 flex items-center justify-center text-lg font-bold">⚙</button>
+    </header>
+
+    <section class="border-brutal card p-4 mb-4">
+      <p class="text-xs tracking-widest text-sage-600 mb-2">CURRENT WORK</p>
+      <h2 id="chapter" class="text-xl font-bold mb-2">Loading…</h2>
+      <div class="flex items-center gap-2 mb-2">
+        <span id="state" class="badge px-2 py-1 text-xs font-bold uppercase">--</span>
+        <span id="wordCount" class="text-xs text-sage-600"></span>
+      </div>
+      <p id="docSource" class="text-xs text-sage-600 mb-1"></p>
+      <p id="lastSync" class="text-xs text-sage-600">Last sync: --</p>
+    </section>
+
+    <section class="border-brutal-thin p-3 mb-6">
+      <p class="text-xs tracking-widest text-sage-600 mb-2">CHAPTERS</p>
+      <ul id="chapterList" class="text-sm space-y-1"></ul>
+    </section>
+
+    <div class="space-y-2 mb-6">
+      <button id="factCheckBtn" class="btn-primary w-full py-3 font-bold">CHECK FACTS</button>
+      <button id="driftCheckBtn" class="btn-secondary w-full py-3 font-bold">CHECK FOR DRIFT</button>
+      <button id="refreshBtn" class="btn-secondary w-full py-3 font-bold">↻ REFRESH STATUS</button>
+    </div>
+
+    <p class="text-xs text-sage-600 text-center">Reading from the seed story until a Google Doc is connected in Settings.</p>
+  </div>
+
+  <!-- Fact Check Modal -->
+  <div id="factCheckModal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4">
+    <div class="bg-ivory border-brutal p-6 max-w-sm w-full modal-box overflow-y-auto">
+      <h3 class="text-lg font-bold mb-4">FACT CHECK A CLAIM</h3>
+
+      <textarea id="claimInput" placeholder="Paste or type a claim from your book…"
+        class="w-full border-brutal-thin p-2 mb-4 text-sm" rows="3"></textarea>
+
+      <div class="flex gap-2 mb-4">
+        <button id="searchBtn" class="btn-primary flex-1 py-2 font-bold">SEARCH</button>
+        <button id="closeFactCheck" class="btn-secondary flex-1 py-2 font-bold">CLOSE</button>
+      </div>
+
+      <div id="searchLoading" class="hidden text-center text-sm py-4">Searching…</div>
+      <div id="searchMessage" class="hidden text-xs text-sage-600 mb-2"></div>
+      <div id="searchResults" class="hidden space-y-3 max-h-64 overflow-y-auto">
+        <p class="text-xs font-bold mb-2">SOURCES</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drift Check Modal -->
+  <div id="driftModal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4">
+    <div class="bg-ivory border-brutal p-6 max-w-sm w-full modal-box overflow-y-auto">
+      <h3 class="text-lg font-bold mb-2">CHECK FOR DRIFT</h3>
+      <p class="text-xs text-sage-600 mb-4">Paste a passage before and after an edit to check for false-comfort drift.</p>
+
+      <div id="driftForm">
+        <label class="text-xs font-bold">BEFORE</label>
+        <textarea id="beforeInput" class="w-full border-brutal-thin p-2 mb-3 text-sm" rows="3"></textarea>
+
+        <label class="text-xs font-bold">AFTER</label>
+        <textarea id="afterInput" class="w-full border-brutal-thin p-2 mb-4 text-sm" rows="3"></textarea>
+
+        <div class="flex gap-2">
+          <button id="analyzeBtn" class="btn-primary flex-1 py-2 font-bold">ANALYZE</button>
+          <button id="closeDrift" class="btn-secondary flex-1 py-2 font-bold">CLOSE</button>
+        </div>
+      </div>
+
+      <div id="driftLoading" class="hidden text-center text-sm py-4">Analyzing…</div>
+
+      <div id="driftResult" class="hidden">
+        <p id="driftClean" class="hidden text-sm mb-4">No drift detected. Reads consistent.</p>
+
+        <div id="driftFlag" class="hidden">
+          <p class="text-sm font-bold mb-2">⚠ CHANGE DETECTED</p>
+          <p id="editReason" class="text-sm text-sage-600 mb-4"></p>
+
+          <div class="card border-l-4 border-ink p-3 mb-4">
+            <p class="text-xs font-bold mb-1">BEFORE</p>
+            <p id="beforeText" class="text-xs mb-3"></p>
+            <p class="text-xs font-bold mb-1">AFTER</p>
+            <p id="afterText" class="text-xs"></p>
+          </div>
+
+          <div class="flex gap-2">
+            <button id="keepBtn" class="btn-primary flex-1 py-2 font-bold">KEEP IT</button>
+            <button id="revertBtn" class="btn-secondary flex-1 py-2 font-bold">GO BACK</button>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mt-4">
+          <button id="checkAnotherBtn" class="btn-secondary flex-1 py-2 font-bold">CHECK ANOTHER</button>
+          <button id="closeDriftResult" class="btn-secondary flex-1 py-2 font-bold">CLOSE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4">
+    <div class="bg-ivory border-brutal p-6 max-w-sm w-full modal-box overflow-y-auto">
+      <h3 class="text-lg font-bold mb-4">SETTINGS</h3>
+
+      <label class="text-xs font-bold">GOOGLE DOC LINK</label>
+      <input id="googleDocLink" type="text" placeholder="https://docs.google.com/document/d/…" class="w-full border-brutal-thin p-2 mb-1 text-sm" />
+      <p class="text-xs text-sage-600 mb-3">Leave blank to keep using the seed story.</p>
+
+      <label class="text-xs font-bold">GOOGLE DOCS API KEY <span id="googleKeyStatus" class="text-sage-600"></span></label>
+      <input id="googleDocsApiKey" type="password" placeholder="Not set" class="w-full border-brutal-thin p-2 mb-3 text-sm" />
+
+      <label class="text-xs font-bold">ANTHROPIC API KEY <span id="anthropicKeyStatus" class="text-sage-600"></span></label>
+      <input id="anthropicApiKey" type="password" placeholder="Not set" class="w-full border-brutal-thin p-2 mb-1 text-sm" />
+      <p class="text-xs text-sage-600 mb-3">Powers chapter state + drift detection. Falls back to rule-based checks without it.</p>
+
+      <label class="text-xs font-bold">EXA API KEY <span id="exaKeyStatus" class="text-sage-600"></span></label>
+      <input id="exaApiKey" type="password" placeholder="Not set" class="w-full border-brutal-thin p-2 mb-1 text-sm" />
+      <p class="text-xs text-sage-600 mb-4">Powers Check Facts.</p>
+
+      <div class="flex gap-2">
+        <button id="saveSettingsBtn" class="btn-primary flex-1 py-2 font-bold">SAVE</button>
+        <button id="closeSettings" class="btn-secondary flex-1 py-2 font-bold">CLOSE</button>
+      </div>
+      <p id="settingsSaved" class="hidden text-xs text-sage-600 text-center mt-3">Saved.</p>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
