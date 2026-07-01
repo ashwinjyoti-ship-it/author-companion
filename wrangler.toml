@@ -1,12 +1,8 @@
-name = "book-companion"
-main = "src/worker.js"
+name = "author-companion"
+pages_build_output_dir = "public"
 compatibility_date = "2025-01-15"
-
-[assets]
-directory = "./public"
-binding = "ASSETS"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "book-companion"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_name = "author-companion-db"
+database_id = "ad222c52-772c-4124-8cd4-3c068aa262e8"
