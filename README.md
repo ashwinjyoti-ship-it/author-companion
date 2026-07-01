@@ -31,3 +31,12 @@ npm run deploy
 ```
 
 Live at `author-companion.pages.dev`.
+
+## Auto-deploy
+
+`.github/workflows/deploy.yml` deploys to Cloudflare Pages on every push to `main` (i.e. every merged PR): it applies D1 migrations, then runs `wrangler pages deploy`.
+
+It needs two repo secrets (Settings → Secrets and variables → Actions):
+
+- `CLOUDFLARE_API_TOKEN` — a token with Cloudflare Pages Edit + D1 Edit permissions.
+- `CLOUDFLARE_ACCOUNT_ID` — your Cloudflare account ID.
