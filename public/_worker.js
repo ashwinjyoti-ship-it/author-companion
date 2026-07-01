@@ -1,8 +1,8 @@
-import { SEED_STORY_TEXT } from "./seedStory.js";
-import { parseChapters, inferStateHeuristic, detectDriftHeuristic } from "./lib/docParser.js";
-import { classifyChapterState, analyzeDrift } from "./lib/anthropic.js";
-import { searchExa } from "./lib/exa.js";
-import { getSetting, getAllSettings, setSetting, maskSettings, SETTINGS_KEYS } from "./lib/settings.js";
+import { SEED_STORY_TEXT } from "../src/seedStory.js";
+import { parseChapters, inferStateHeuristic, detectDriftHeuristic } from "../src/lib/docParser.js";
+import { classifyChapterState, analyzeDrift } from "../src/lib/anthropic.js";
+import { searchExa } from "../src/lib/exa.js";
+import { getSetting, getAllSettings, setSetting, maskSettings, SETTINGS_KEYS } from "../src/lib/settings.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
@@ -42,12 +42,6 @@ export default {
     } catch (error) {
       return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: JSON_HEADERS });
     }
-  },
-
-  async scheduled(event, env) {
-    await env.DB.prepare(
-      "DELETE FROM edits_flagged WHERE created_at < datetime('now', '-30 days')"
-    ).run();
   }
 };
 
